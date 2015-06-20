@@ -1,10 +1,10 @@
 describe('Async Wrapper', function () {
-    var rewire = require('rewire');
-    var asyncWrapper = rewire('./../lib/async-wrapper');
+
+    var asyncWrapper = require('./../index');
     var expect = require('chai').expect;
 
-    beforeEach(function(){
-       asyncWrapper.__set__('locks',{});
+    beforeEach(function () {
+        asyncWrapper.__reset();
     });
 
     describe('Check if exists', function () {
@@ -247,6 +247,7 @@ describe('Async Wrapper', function () {
             asyncWrapper.lockPromise('A', resolvedFunc).then(function (result) {
                 expect(result).to.be.equal('ok');
                 done();
+                return asyncWrapper.Promise.resolve();
             });
 
         });
@@ -257,35 +258,43 @@ describe('Async Wrapper', function () {
             }, function (result) {
                 expect(result).to.be.equal('error');
                 done();
+                return asyncWrapper.Promise.resolve();
             });
 
         });
 
 
-        it.only('should allow only one execution within a lock', function (done) {
+        it('should allow only one execution within a lock', function (done) {
+            var count = 0;
             asyncWrapper.lockPromise('A', function () {
                 var promise = asyncWrapper.Promise.resolve('ok');
                 asyncWrapper.lockPromise('A', function () {
-                    done('Should not be here');
+                    expect(count).to.be.equal(1);
+                    done();
+                    return asyncWrapper.Promise.resolve('ok');
                 });
+                expect(count).to.be.equal(0);
                 return promise;
 
             }).then(function () {
-                done();
+                count++;
             });
 
         });
 
         it('should allow only one execution within a lock (regular inside promise)', function (done) {
+            var count = 0;
             asyncWrapper.lockPromise('A', function () {
                 var promise = asyncWrapper.Promise.resolve('ok');
                 asyncWrapper.lock('A', function () {
-                    done('Should not be here');
+                    expect(count).to.be.equal(1);
+                    done();
                 });
+                expect(count).to.be.equal(0);
                 return promise;
 
             }).then(function () {
-                done();
+                count++;
             });
 
         });
@@ -304,29 +313,40 @@ describe('Async Wrapper', function () {
         it('should not allow non string lock name', function () {
             var foo = function () {
             };
-            expect(function () {
-                asyncWrapper.lockPromise({}, foo);
-            }).to.throw('The name must be a non empty string');
 
-            expect(function () {
-                asyncWrapper.lockPromise('', foo);
-            }).to.throw('The name must be a non empty string');
+            asyncWrapper.lockPromise({}, foo).then(function () {
+                done('should not be here');
+            }, function (err) {
+                expect(err).to.be.equal('The name must be a non empty string');
+            });
 
-            expect(function () {
-                asyncWrapper.lockPromise(null, foo);
-            }).to.throw('The name must be a non empty string');
+
+            asyncWrapper.lockPromise('', foo).then(function () {
+                done('should not be here');
+            }, function (err) {
+                expect(err).to.be.equal('The name must be a non empty string');
+            });
+
+            asyncWrapper.lockPromise(null, foo).then(function () {
+                done('should not be here');
+            }, function (err) {
+                expect(err).to.be.equal('The name must be a non empty string');
+            });
         });
 
         it('should not allow entering with a non function', function () {
-            expect(function () {
-                asyncWrapper.lockPromise('moo');
-            }).to.throw('Callback must be a function');
+            asyncWrapper.lockPromise('moo').then(function () {
+                done('should not be here');
+            }, function (err) {
+                expect(err).to.be.equal('Callback must be a function');
+            });
         });
 
         it('should allow lock after unlocked by first entrant', function (done) {
             asyncWrapper.lockPromise('A', resolvedFunc).then(function () {
                 asyncWrapper.lockPromise('A', resolvedFunc).then(function () {
                     done();
+                    return asyncWrapper.Promise.resolve();
                 });
             });
 
@@ -337,6 +357,7 @@ describe('Async Wrapper', function () {
                 expect(a).to.be.equal(1);
                 expect(b).to.be.equal('a');
                 done();
+                return asyncWrapper.Promise.resolve();
             }, 1, 'a');
 
         });

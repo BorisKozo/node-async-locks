@@ -1,10 +1,9 @@
 describe('Async Lock', function () {
-    var rewire = require('rewire');
-    var AsyncLock = rewire('./../lib/async-lock');
+    var AsyncLock = require('./../index').AsyncLock;
     var expect = require('chai').expect;
 
-    beforeEach(function(){
-       AsyncLock.__set__('tokenId',0);
+    beforeEach(function () {
+        AsyncLock.__reset();
     });
 
     describe('Real examples', function () {
@@ -88,33 +87,33 @@ describe('Async Lock', function () {
             var token = lock.createToken(callback);
             lock.executeCallback(token);
             flag = false;
-            
+
         });
 
         describe('Reduce Queue', function () {
             it('should return an empty list if maxQueueSize is not a number', function () {
                 var lock = new AsyncLock();
                 var queue = [];
-                expect(lock.reduceQueue(queue, { maxQueueSize: 'a' }).length).to.be.equal(0);
-                expect(lock.reduceQueue(queue, { maxQueueSize: NaN }).length).to.be.equal(0);
+                expect(lock.reduceQueue(queue, {maxQueueSize: 'a'}).length).to.be.equal(0);
+                expect(lock.reduceQueue(queue, {maxQueueSize: NaN}).length).to.be.equal(0);
             });
 
             it('should return an empty list if overflowStrategy is not one of first,last,this', function () {
                 var lock = new AsyncLock();
                 var queue = ['a', 'b', 'c', 'd'];
-                expect(lock.reduceQueue(queue, { maxQueueSize: 1, overflowStrategy: 'moo' }).length).to.be.equal(0);
+                expect(lock.reduceQueue(queue, {maxQueueSize: 1, overflowStrategy: 'moo'}).length).to.be.equal(0);
             });
 
             it('should return an empty list if maxQueueSize is larger than actual queue size', function () {
                 var lock = new AsyncLock();
                 var queue = ['a', 'b', 'c', 'd'];
-                expect(lock.reduceQueue(queue, { maxQueueSize: 5, overflowStrategy: 'last' }).length).to.be.equal(0);
+                expect(lock.reduceQueue(queue, {maxQueueSize: 5, overflowStrategy: 'last'}).length).to.be.equal(0);
             });
 
             it('should reduce the last elements of the queue if overflowStrategy is last', function () {
                 var lock = new AsyncLock();
                 var queue = ['a', 'b', 'c', 'd'];
-                var reducedQueue = lock.reduceQueue(queue, { maxQueueSize: 2, overflowStrategy: 'last' });
+                var reducedQueue = lock.reduceQueue(queue, {maxQueueSize: 2, overflowStrategy: 'last'});
                 expect(queue.length).to.be.equal(2);
                 expect(queue[0]).to.be.equal('a');
                 expect(queue[1]).to.be.equal('d');
@@ -127,7 +126,7 @@ describe('Async Lock', function () {
             it('should reduce the first elements of the queue if overflowStrategy is first', function () {
                 var lock = new AsyncLock();
                 var queue = ['a', 'b', 'c', 'd'];
-                var reducedQueue = lock.reduceQueue(queue, { maxQueueSize: 2, overflowStrategy: 'first' });
+                var reducedQueue = lock.reduceQueue(queue, {maxQueueSize: 2, overflowStrategy: 'first'});
                 expect(queue.length).to.be.equal(2);
                 expect(queue[0]).to.be.equal('c');
                 expect(queue[1]).to.be.equal('d');
@@ -139,7 +138,7 @@ describe('Async Lock', function () {
             it('should reduce only the last element of the queue if overflowStrategy is this', function () {
                 var lock = new AsyncLock();
                 var queue = ['a', 'b', 'c', 'd'];
-                var reducedQueue = lock.reduceQueue(queue, { maxQueueSize: 2, overflowStrategy: 'this' });
+                var reducedQueue = lock.reduceQueue(queue, {maxQueueSize: 2, overflowStrategy: 'this'});
                 expect(queue.length).to.be.equal(3);
                 expect(queue[0]).to.be.equal('a');
                 expect(queue[1]).to.be.equal('b');
@@ -160,7 +159,7 @@ describe('Async Lock', function () {
                 expect(token.id).to.be.equal(innerToken.id);
                 done();
             });
-            
+
         });
 
         it('should execute the first entrant', function (done) {
@@ -168,7 +167,7 @@ describe('Async Lock', function () {
             lock.enter(function () {
                 done();
             });
-            
+
         });
 
         it('should allow only one execution within a lock', function (done) {
@@ -179,7 +178,7 @@ describe('Async Lock', function () {
                 });
                 done();
             });
-            
+
         });
 
         it('should not allow entering with a non function', function () {
@@ -191,9 +190,12 @@ describe('Async Lock', function () {
 
         it('should throw if createToken returns null', function () {
             var lock = new AsyncLock();
-            lock.createToken = function () { return null; };
+            lock.createToken = function () {
+                return null;
+            };
             expect(function () {
-                lock.enter(function () { });
+                lock.enter(function () {
+                });
             }).to.throw('Token cannot be null or undefined');
         });
 
@@ -202,7 +204,7 @@ describe('Async Lock', function () {
             lock.enter(function (innerToken) {
                 setTimeout(function () {
                     lock.leave(innerToken);
-                    
+
                 }, 100);
             });
             lock.enter(function () {
@@ -212,12 +214,12 @@ describe('Async Lock', function () {
             lock.enter(function () {
                 done();
             }, 1000);
-            
+
         });
 
         describe('Enter with queue options', function () {
             it('should not allow queuing locks if overflowStrategy is this', function (done) {
-                var lock = new AsyncLock({ maxQueueSize: 0, overflowStrategy: 'this' });
+                var lock = new AsyncLock({maxQueueSize: 0, overflowStrategy: 'this'});
                 lock.enter(function (token) {
                     lock.enter(function () {
                         done('Should not get here');
@@ -226,11 +228,11 @@ describe('Async Lock', function () {
                     token.leave();
                     done();
                 });
-                
+
             });
 
             it('should not allow queuing locks if overflowStrategy is first', function (done) {
-                var lock = new AsyncLock({ maxQueueSize: 1, overflowStrategy: 'first' });
+                var lock = new AsyncLock({maxQueueSize: 1, overflowStrategy: 'first'});
                 lock.enter(function (token) {
                     token.leave();
                 });
@@ -241,11 +243,11 @@ describe('Async Lock', function () {
                     done();
                 });
                 expect(lock.queueSize()).to.be.equal(1);
-                
+
             });
 
             it('should not allow queuing locks if overflowStrategy is last', function (done) {
-                var lock = new AsyncLock({ maxQueueSize: 1, overflowStrategy: 'last' });
+                var lock = new AsyncLock({maxQueueSize: 1, overflowStrategy: 'last'});
                 lock.enter(function (token) {
                     token.leave();
                 });
@@ -257,11 +259,11 @@ describe('Async Lock', function () {
                 });
 
                 expect(lock.queueSize()).to.be.equal(1);
-                
+
             });
 
             it('should not allow queuing locks if overflowStrategy is this', function (done) {
-                var lock = new AsyncLock({ maxQueueSize: 1, overflowStrategy: 'this' });
+                var lock = new AsyncLock({maxQueueSize: 1, overflowStrategy: 'this'});
                 lock.enter(function (token) {
                     token.leave();
                 });
@@ -273,7 +275,7 @@ describe('Async Lock', function () {
                 });
 
                 expect(lock.queueSize()).to.be.equal(1);
-                
+
             });
 
         });
@@ -310,52 +312,52 @@ describe('Async Lock', function () {
                 }).to.throw('Owner token mismatch. Expected 0 but received 11');
                 done();
             });
-            
+
         });
 
         it('should allow enter after leave was called', function (done) {
             var lock = new AsyncLock();
             lock.enter(function (token) {
                 lock.leave(token);
-                
+
             });
             lock.enter(function () {
                 done();
             });
-            
+
         });
 
         it('should allow enter after token.leave was called', function (done) {
             var lock = new AsyncLock();
             lock.enter(function (token) {
                 token.leave();
-                
+
             });
             lock.enter(function () {
                 done();
             });
-            
+
         });
 
         it('should allow queuing of several entrants', function (done) {
             var lock = new AsyncLock();
             lock.enter(function (token) {
                 token.leave();
-                
+
             });
             lock.enter(function (token) {
                 token.leave();
-                
+
             });
             lock.enter(function (token) {
                 token.leave();
-                
+
             });
             lock.enter(function () {
                 done();
             });
 
-            
+
         });
 
 
@@ -364,13 +366,13 @@ describe('Async Lock', function () {
             lock.enter(function (token) {
                 setTimeout(function () {
                     lock.leave(token);
-                    
+
                 }, 100);
             });
             lock.enter(function () {
                 done();
             });
-            
+
         });
 
         it('should not execute the next entrant when leave was called if that token was canceled', function (done) {
@@ -397,7 +399,7 @@ describe('Async Lock', function () {
                     done();
                 }, 100);
             });
-            
+
 
         });
 
@@ -436,7 +438,7 @@ describe('Async Lock', function () {
                 expect(lock.isLocked()).to.be.false;
                 done();
             });
-            
+
         });
 
         it('should be locked someone locked it', function (done) {
@@ -445,7 +447,7 @@ describe('Async Lock', function () {
                 expect(lock.isLocked()).to.be.true;
                 done();
             });
-            
+
         });
     });
 
@@ -461,7 +463,7 @@ describe('Async Lock', function () {
                 expect(lock.queueSize()).to.be.equal(0);
                 done();
             })
-            
+
         });
 
         it('should get a queue size of 2 when two callbacks are pending', function (done) {
@@ -470,9 +472,11 @@ describe('Async Lock', function () {
                 expect(lock.queueSize()).to.be.equal(2);
                 done();
             })
-            lock.enter(function () { });
-            lock.enter(function () { });
-            
+            lock.enter(function () {
+            });
+            lock.enter(function () {
+            });
+
         });
 
 

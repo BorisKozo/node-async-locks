@@ -26,10 +26,10 @@
   "devDependencies": {
     "chai": "^3.0.0",
     "gulp": "^3.9.0",
+    "gulp-istanbul": "^0.10.0",
     "gulp-jshint": "^1.11.0",
     "gulp-mocha": "^2.1.1",
-    "jshint-stylish": "^2.0.0",
-    "rewire": "^2.3.4"
+    "jshint-stylish": "^2.0.0"
   },
   "dependencies": {
     "bluebird": "^2.9.30",
