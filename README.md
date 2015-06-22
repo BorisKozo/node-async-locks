@@ -1,6 +1,6 @@
 # node-async-locks
 ==========================================
-[![Build Status](https://travis-ci.org/BorisKozo/node-async-locks.png?branch=master)](https://travis-ci.org/BorisKozo/node-async-locks)
+[![Build Status](https://travis-ci.org/BorisKozo/node-async-locks.svg)](https://travis-ci.org/BorisKozo/node-async-locks)
 
 A set of asynchronous lock patterns for Node.js
 
