@@ -1,5 +1,7 @@
 # node-async-locks
+
 ==========================================
+
 [![Build Status](https://travis-ci.org/BorisKozo/node-async-locks.svg)](https://travis-ci.org/BorisKozo/node-async-locks)
 
 A set of asynchronous lock patterns for Node.js
@@ -578,7 +580,9 @@ The unit tests are written with Mocha and use Gulp task to start.
 
 3. From the project folder, run `gulp test` to execute the unit tests
 
+
 ##License
+
 (MIT License)
 Copyright (c) 2014 Boris Kozorovitzky,
 
