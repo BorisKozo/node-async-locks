@@ -4,7 +4,7 @@
   "description": "A set of asynchronous lock patterns for Node.js",
   "main": "index.js",
   "scripts": {
-    "test": "test"
+    "test": "gulp test"
   },
   "repository": {
     "type": "git",
