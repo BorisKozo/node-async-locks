@@ -33,6 +33,6 @@
   },
   "dependencies": {
     "bluebird": "^2.9.30",
-    "lodash": "^3.9.3"
+    "lodash": "^4.17.20"
   }
 }
