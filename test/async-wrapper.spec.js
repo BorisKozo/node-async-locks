@@ -128,7 +128,7 @@ describe('Async Wrapper', function () {
             var options = asyncWrapper.getOptions('lol');
             expect(options).to.be.ok;
             expect(options.a).to.be.equal('a');
-            expect(options.maxQueueSize).to.be.defined;
+            expect(options.maxQueueSize).to.exist;
         });
     });
 
@@ -138,7 +138,7 @@ describe('Async Wrapper', function () {
             var options = asyncWrapper.getOptions('lol');
             expect(options).to.be.ok;
             expect(options.a).to.be.equal('a');
-            expect(options.maxQueueSize).to.be.defined;
+            expect(options.maxQueueSize).to.exist;
         });
 
         it('should set options of existing lock', function (done) {
@@ -147,7 +147,7 @@ describe('Async Wrapper', function () {
                 var options = asyncWrapper.getOptions('lol');
                 expect(options).to.be.ok;
                 expect(options.a).to.be.equal('a');
-                expect(options.maxQueueSize).to.be.defined;
+                expect(options.maxQueueSize).to.exist;
                 done();
             });
             var originalOptions = asyncWrapper.getOptions('lol')

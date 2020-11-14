@@ -44,5 +44,6 @@
   "browser": false,
   "jquery": false,
   "predef": [
+    "Promise"
   ]
 }

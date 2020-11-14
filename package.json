@@ -4,7 +4,8 @@
   "description": "A set of asynchronous lock patterns for Node.js",
   "main": "index.js",
   "scripts": {
-    "test": "gulp test"
+    "test": "mocha --ui bdd ./test --recursive",
+    "hint": "jshint lib"
   },
   "repository": {
     "type": "git",
@@ -24,15 +25,12 @@
   },
   "homepage": "https://github.com/BorisKozo/node-async-locks",
   "devDependencies": {
-    "chai": "^3.0.0",
-    "gulp": "^3.9.0",
-    "gulp-istanbul": "^0.10.0",
-    "gulp-jshint": "^1.11.0",
-    "gulp-mocha": "^2.1.1",
-    "jshint-stylish": "^2.0.0"
+    "chai": "^4.2.0",
+    "jshint": "^2.12.0",
+    "nyc": "^15.1.0"
   },
   "dependencies": {
-    "bluebird": "^2.9.30",
-    "lodash": "^3.9.3"
+    "lodash": "^4.17.20",
+    "mocha": "^8.2.1"
   }
 }

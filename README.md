@@ -569,14 +569,14 @@ Note than inside a callback that callback is not considered pending.
 
 ## Unit Tests
 
-The unit tests are written with Mocha and use Gulp task to start.
+The unit tests are written with Mocha.
 
 
-1. Be sure you have NodeJS, NPM, and gulp-cli installed on your system
+1. Be sure you have NodeJS, NPM, 
 
-2. Run `npm install` to install Mocha and Gulp locally
+2. Run `npm install` to install Mocha locally
 
-3. From the project folder, run `gulp test` to execute the unit tests
+3. From the project folder, run `npm run test` to execute the unit tests
 
 
 ##License
