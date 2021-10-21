@@ -20,7 +20,7 @@ in your favorite command line tool
 
 ## Module Components:
 
-* **AsyncLock** A constructor function for creating asyc locks.
+* **AsyncLock** A constructor function for creating async locks.
 * **ResetEvent** A constructor function for creating reset events.
 * **Wrapper** A wrapper module that provides access to the previous modules and allows simple management for your locks.
 
@@ -90,13 +90,12 @@ var AsyncLock = require('node-async-locks').AsyncLock;
 Create an async lock and use the enter function to create a critical section.
 
 ```js
-    var lock = new AsyncLock();
-    lock.enter(function (token) {
-        //this code will be executed by only one caller at a time
-        //...
-        lock.leave(token);
-    });
-});
+ var lock = new AsyncLock();
+ lock.enter(function (token) {
+     //this code will be executed by only one caller at a time
+     //...
+     lock.leave(token);
+ });
 ```
 
 ### Helper Functions
@@ -152,7 +151,7 @@ Locks within the ````Wrapper```` are created with these options as well.
 
 * **maxQueueSize** (number) [default Infinity] - The maximum number of queued pending callbacks. Note that the executing callback is not considered pending.
 * **overflowStrategy** (string) [default 'this'] - The strategy that will be used when a callback causes the pending queue to exceed the _maxQueueSize_.
-The value symbolises the item that is going to be removed from the queue to accommodate for the new callback.
+The value symbolizes the item that is going to be removed from the queue to accommodate for the new callback.
 Possible values are: 'this' - The current (the callback that caused the queue to exceed _maxQueueSize_) callback is going to be removed from the queue.
 'first' - The first (oldest) callback is going to be removed and the current callback will be added at the end. 'last' - The last callback is going to be removed
 and the current callback will take its place.
@@ -165,11 +164,10 @@ Assuming the queue contains the callbacks [A,B,C] the callback D is the current 
 ```js
  var lock = new AsyncLock({maxQueueSize:3});
  var token = lock.enter(function (innerToken) {
-          // innerToken === token
-          // write the safe code here
-          lock.leave(innerToken);
-        });
-      });
+     // innerToken === token
+     // write the safe code here
+     lock.leave(innerToken);
+ });
 ```
 
 #### AsyncLockInstance#enter(callback,[timeout]) -> token
@@ -183,11 +181,10 @@ If _timeout_ is not provided will wait indefinitely.
 ```js
  var lock = new AsyncLock();
  var token = lock.enter(function (innerToken) {
-          // innerToken === token
-          // write the safe code here
-          lock.leave(innerToken);
-        });
-      });
+     // innerToken === token
+     // write the safe code here
+     lock.leave(innerToken);
+ });
 ```
 
 #### AsyncLockInstance#leave(token,abortPending)
@@ -201,11 +198,10 @@ token.isCanceled is set to true.
 ```js
  var lock = new AsyncLock();
  lock.enter(function (innerToken) {
-        setTimeout(function(){
-            console.log('First');
-            lock.leave(innerToken);
-        },2000);
-    });
+     setTimeout(function(){
+        console.log('First');
+        lock.leave(innerToken);
+     }, 2000);
  });
 
  lock.enter(function (innerToken) {
@@ -213,7 +209,7 @@ token.isCanceled is set to true.
      lock.leave(innerToken);
  });
 
-//Prints: First Second
+ //Prints: First Second
 ```
 
 #### AsyncLockInstance#isLocked() -> boolean
@@ -224,12 +220,11 @@ Returns true if the lock is currently acquired and false otherwise.
  var lock = new AsyncLock();
  lock.isLocked(); //false
  lock.enter(function (innerToken) {
-          // innerToken === token
-          // write the safe code here
-          lock.isLocked(); //true
-          lock.leave(innerToken);
-        });
-      });
+     // innerToken === token
+     // write the safe code here
+     lock.isLocked(); //true
+     lock.leave(innerToken);
+ });
 ```
 
 #### AsyncLockInstance#queueSize() -> number
@@ -249,7 +244,7 @@ Note than inside a callback that callback is no longer pending.
  });
 ```
 
-#Wrapper
+## Wrapper
 
 A simple to use interface around AsyncLocks without the
 need to create your own lock instances.
@@ -262,13 +257,11 @@ need to create your own lock instances.
 ### Basic Usage
 
 ```js
-
-       wrapper.lock('myLock',function (leaveCallback) {
-        //this code will be executed by only one caller at a time
-        //...
-        leaveCallback();
-    });
-}]
+ wrapper.lock('myLock',function (leaveCallback) {
+     //this code will be executed by only one caller at a time
+     //...
+     leaveCallback();
+ });
 ```
 
 ### Wrapper API
@@ -286,10 +279,10 @@ If _timeout_ is provided will wait only the given amount of milliseconds and the
 If _timeout_ is not provided will wait indefinitely.
 
 ```js
-       wrapper.lock('foo',function (leave) {
-         //Do something critical
-        leave();
-    });
+ wrapper.lock('foo',function (leave) {
+     // Do something critical
+     leave();
+ });
 ```
 
 #### wrapper#lockPromise(lockName,callback,...args) -> promise
@@ -303,11 +296,11 @@ Note that the wrapper uses ES6 Promises by default and falls back to BlueBird pr
 The Promise used by the wrapper is defined as ````wrapper.Promise```` and can be replaced by the user to any A+ promise library.
 
 ```js
-       wrapper.lockPromise('foo',function () {
-          wrapper.Promise.resolve('ok');
-       }).then(function(message){
-             //The lock is free here
-       });
+ wrapper.lockPromise('foo',function () {
+     return wrapper.Promise.resolve('ok');
+ }).then(function(message){
+     //The lock is free here
+ });
 ```
 
 #### wrapper#isLocked(lockName) -> boolean
@@ -315,12 +308,12 @@ The Promise used by the wrapper is defined as ````wrapper.Promise```` and can be
 Returns true if the lock with the name _lockName_ is currently acquired and false otherwise.
 
 ```js
-       wrapper.isLocked('foo'); //false
-       wrapper.lock('foo',function (leave) {
-           wrapper.isLocked('foo'); //true
-           //Do something critical
-           leave();
-       });
+ wrapper.isLocked('foo'); //false
+ wrapper.lock('foo',function (leave) {
+     wrapper.isLocked('foo'); //true
+     //Do something critical
+     leave();
+ });
 ```
 
 #### wrapper#lockExists(lockName) -> boolean
@@ -328,12 +321,12 @@ Returns true if the lock with the name _lockName_ is currently acquired and fals
 Returns true if the lock with the name _lockName_ already exists in the service and false otherwise.
 
 ```js
-       wrapper.lockExists('foo'); //false
-       wrapper.lock('foo',function (leave) {
-           //Do something critical
-           leave();
-       });
-     wrapper.lockExists('foo'); //true
+ wrapper.lockExists('foo'); //false
+ wrapper.lock('foo',function (leave) {
+     //Do something critical
+     leave();
+ });
+ wrapper.lockExists('foo'); //true
 ```
 
 #### wrapper#queueSize(lockName) -> number
@@ -342,7 +335,6 @@ Returns the number of callbacks currently pending on the lock with the given nam
 Note than inside a callback that callback is no longer pending.
 
 ```js
-
  wrapper.lock('foo',function (leave) {
      wrapper.queueSize('foo'); // 1
      leave();
@@ -359,11 +351,11 @@ Note than inside a callback that callback is no longer pending.
 Returns a copy of the options of the lock with the given name, if the lock doesn't exist returns null
 
 ```js
-       wrapper.lock('foo',function (leave) {
-           //Do something critical
-           leave();
-       });
-     var options = wrapper.getOptions('foo'); //returns the default options of an AsyncLock
+ wrapper.lock('foo',function (leave) {
+     //Do something critical
+     leave();
+ });
+ var options = wrapper.getOptions('foo'); //returns the default options of an AsyncLock
 ```
 
 #### wrapper#setOptions(lockName, options)
@@ -373,18 +365,17 @@ Returns a copy of the options of the lock with the given name, if the lock doesn
  by calling ````wrapper.setOptions('foo');````
 
 ```js
-    wrapper.setOptions('foo',{maxQueueSize:3}); //sets the maximum queue size of the lock foo to 3
-                                                        //Other options remain unchanged
-    wrapper.lock('foo',function (leave) {
-           //Do something critical
-           leave();
-       });
-
+ wrapper.setOptions('foo',{maxQueueSize:3}); //sets the maximum queue size of the lock foo to 3
+                                             //Other options remain unchanged
+ wrapper.lock('foo',function (leave) {
+     //Do something critical
+     leave();
+ });
 ```
 
-#ResetEvent
+## ResetEvent
 
-## What is a ResetEvent?
+### What is a ResetEvent?
 The reset event is somewhat based on the C# [AutoResetEvent](http://msdn.microsoft.com/en-us/library/system.threading.autoresetevent(v=vs.110).aspx) and [ManualResetEvent](http://msdn.microsoft.com/en-us/library/system.threading.manualresetevent.aspx) classes.
 It is similar to a promise only it can be used multiple times.
 When a function begins an activity that must complete before other functions proceed, it calls _reset_ to put the ResetEvent in the non-signaled state.
@@ -395,23 +386,23 @@ Once it has been signaled, a reset event remains signaled until it is manually r
 ### Basic Usage
 
 ```js
-var ResetEvent = require('node-async-locks').ResetEvent;
+ var ResetEvent = require('node-async-locks').ResetEvent;
 ```
 
 ```js
+ var resetEvent = new ResetEvent();
+ var x = 0;
+ 
+ resetEvent.wait(function(){
+     x+=1;
+ });
 
-     var resetEvent = new ResetEvent();
-      var x = 0;
-      resetEvent.wait(function(){
-          x+=1;
-       });
+ resetEvent.wait(function(){
+     console.log(x); //2
+ });
 
-      resetEvent.wait(function(){
-          console.log(x); //2
-       });
-       x++;
-       resetEvent.set();
-}]
+ x++;
+ resetEvent.set();
 ```
 
 ### Helper Functions
@@ -567,6 +558,21 @@ Note than inside a callback that callback is not considered pending.
  resetEvent.set();
 ```
 
+## TypeScript
+
+This module include TypeScript definitions:
+
+```typescript
+import { AsyncLock } from "node-async-locks";
+
+const lock = new AsyncLock();
+lock.enter(token => {
+    //this code will be executed by only one caller at a time
+    //...
+   lock.leave(token);
+});
+```
+
 ## Unit Tests
 
 The unit tests are written with Mocha.
@@ -579,7 +585,7 @@ The unit tests are written with Mocha.
 3. From the project folder, run `npm run test` to execute the unit tests
 
 
-##License
+## License
 
 (MIT License)
 Copyright (c) 2014 Boris Kozorovitzky,
