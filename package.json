@@ -1,6 +1,6 @@
 {
   "name": "node-async-locks",
-  "version": "2.0.1",
+  "version": "2.1.1",
   "description": "A set of asynchronous lock patterns for Node.js",
   "main": "index.js",
   "types": "index.d.ts",
