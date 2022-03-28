@@ -1,6 +1,6 @@
 {
   "name": "node-async-locks",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "description": "A set of asynchronous lock patterns for Node.js",
   "main": "index.js",
   "types": "index.d.ts",
@@ -26,9 +26,9 @@
   },
   "homepage": "https://github.com/BorisKozo/node-async-locks",
   "devDependencies": {
-    "chai": "^4.3.4",
-    "jshint": "^2.13.1",
-    "mocha": "^9.0.3",
+    "chai": "^4.3.6",
+    "jshint": "^2.13.4",
+    "mocha": "^9.2.2",
     "nyc": "^15.1.0"
   },
   "dependencies": {
